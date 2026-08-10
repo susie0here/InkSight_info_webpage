@@ -439,7 +439,7 @@
             color: var(--accent-navy);
         }
 
-        /* Sandbox Component (Matching Screenshot Dashboard Palette) */
+        /* Sandbox Component */
         .demo-sandbox {
             background: var(--accent-navy);
             border-radius: 20px;
@@ -922,9 +922,9 @@
                         <span id="sb-alert">偵測到思考滯留中...</span>
                     </div>
                     <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; font-family: monospace; line-height: 1.8;">
-                        [學生筆跡軌跡預覽]<br>
+                        <span id="sb-canvas-preview">[學生筆跡軌跡預覽]</span><br>
                         Step 1: x^2 + 6x = 16<br>
-                        Step 2: x^2 + 6x + ___ = 16 + ___ <span style="border-bottom: 2px solid var(--accent-coral); color: var(--accent-coral); font-weight: bold;">| 筆尖停頓於此</span>
+                        Step 2: x^2 + 6x + ___ = 16 + ___ <span style="border-bottom: 2px solid var(--accent-coral); color: var(--accent-coral); font-weight: bold;" id="sb-canvas-pause">| 筆尖停頓於此</span>
                     </div>
                 </div>
 
@@ -1023,7 +1023,7 @@
             </div>
         </section>
 
-        <!-- Final CTA Section (新增：點擊嘗試按鈕區塊) -->
+        <!-- Final Action Section -->
         <section class="final-cta-section">
             <h3 id="final-cta-title">準備好升級您的智慧課堂體驗了嗎？</h3>
             <p id="final-cta-desc">立即體驗 InkSight AI 智慧筆跡靈視，探索筆跡數據帶來的精準教學變革。</p>
@@ -1044,6 +1044,7 @@
         const translations = {
             TC: {
                 brandText: "InkSight AI 智慧筆跡靈視",
+                heroTitle: "看見每一次<br><span class=\"highlight-text\">卡住的思考</span>",
                 heroSubtitle: "InkSight 將學生的書寫軌跡轉譯為即時教學訊號，讓每一次介入都落在最需要的地方。",
                 ctaBtnText: "進入教師工作台",
                 pdpoTitle: "合規保障：Zero PII 零個人識別資訊架構 (符合 PDPO 標準)",
@@ -1092,17 +1093,19 @@
                 l1Action: "畫布彈出「思考滯留」預警，提供第一時間離座關懷訊號。",
                 l2Tag: "微觀診斷",
                 l2Metrics: "• 筆跡動態軌跡復盤<br>• 單題卡點風險 % (如 42%)<br>• 特定步驟迷思概念標註",
-                l2Ai: "精準識別卡點主因</br>（例如：配方法移項時遺漏常數項、未維持等式平衡）。",
+                l2Ai: "精準識別卡點主因（例如：配方法移項時遺漏常數項、未維持等式平衡）。",
                 l2Action: "• 使用 AI 生成的導引話術進行個別問話。<br>• 點擊「推送鷹架提示」將輔助發送至學生 iPad。",
                 l3Tag: "宏觀分析",
                 l3Metrics: "• 整份試卷阻礙熱力圖<br>• 全班逐題阻塞矩陣<br>• 班級共同薄弱知識點提煉",
-                l3Ai: "呈現整體課堂理解覆蓋率，判定高風險題目</br>（例如：Q2 配方法阻塞率達 42%）。",
+                l3Ai: "呈現整體課堂理解覆蓋率，判定高風險題目（例如：Q2 配方法阻塞率達 42%）。",
                 l3Action: "• 即時調整課堂講授節奏。• 一鍵建立「全班 3 分鐘鷹架提示」進行集體觀念補強。",
                 sandboxHeaderTitle: "實時遙測與診斷沙盒預覽",
                 sandboxHeaderDesc: "重現 iPad 作答介面與 AI 實時卡點分析模組",
                 sbClassTitle: "CLASSROOM SIGNAL / LIVE",
                 sbQTitle: "Q2 · 配方法 (認知阻塞率: 42%)",
                 sbAlert: "偵測到思考滯留中...",
+                sbCanvasPreview: "[學生筆跡軌跡預覽]",
+                sbCanvasPause: "| 筆尖停頓於此",
                 sbTelemTitle: "Apple Pencil 遙測數據流",
                 m1Title: "即時壓感 (Pressure)",
                 m2Title: "當前思考停頓",
@@ -1129,6 +1132,7 @@
             },
             SC: {
                 brandText: "InkSight AI 智慧笔迹灵视",
+                heroTitle: "看见每一次<br><span class=\"highlight-text\">卡住的思考</span>",
                 heroSubtitle: "InkSight 将学生的书写轨迹翻译为实时教学信号，让每一次介入都落在最需要的地方。",
                 ctaBtnText: "进入教师工作台",
                 pdpoTitle: "合规保障：Zero PII 零个人识别信息架构 (符合 PDPO 标准)",
@@ -1177,17 +1181,19 @@
                 l1Action: "画布弹出“思考滞留”预警，提供第一时间离座关怀信号。",
                 l2Tag: "微观诊断",
                 l2Metrics: "• 笔迹动态轨迹复盘<br>• 单题卡点风险 % (如 42%)<br>• 特定步骤迷思概念标注",
-                l2Ai: "精准识别卡点主因</br>（例如：配方法移项时遗漏常数项、未维持等式平衡）。",
+                l2Ai: "精准识别卡点主因（例如：配方法移项时遗漏常数项、未维持等式平衡）。",
                 l2Action: "• 使用 AI 生成的导引话术进行个别问话。<br>• 点击“推送鹰架提示”将辅助发送至学生 iPad。",
                 l3Tag: "宏观分析",
                 l3Metrics: "• 整份试卷阻碍热力图<br>• 全班逐题阻塞矩阵<br>• 班级共同薄弱知识点提炼",
-                l3Ai: "呈现整体课堂理解覆盖率，判定高风险题目</br>（例如：Q2 配方法阻塞率达 42%）。",
+                l3Ai: "呈现整体课堂理解覆盖率，判定高风险题目（例如：Q2 配方法阻塞率达 42%）。",
                 l3Action: "• 实时调整课堂讲授节奏。• 一键建立“全班 3 分钟鹰架提示”进行集体观念补强。",
                 sandboxHeaderTitle: "实时遥测与诊断沙盒预览",
                 sandboxHeaderDesc: "重现 iPad 作答界面与 AI 实时卡点分析模块",
                 sbClassTitle: "CLASSROOM SIGNAL / LIVE",
                 sbQTitle: "Q2 · 配方法 (认知阻塞率: 42%)",
                 sbAlert: "侦测到思考滞留中...",
+                sbCanvasPreview: "[学生笔迹轨迹预览]",
+                sbCanvasPause: "| 笔尖停顿于此",
                 sbTelemTitle: "Apple Pencil 遥测数据流",
                 m1Title: "实时压感 (Pressure)",
                 m2Title: "当前思考停顿",
@@ -1214,6 +1220,7 @@
             },
             EN: {
                 brandText: "InkSight AI",
+                heroTitle: "Seeing Every<br><span class=\"highlight-text\">Paused Thought</span>",
                 heroSubtitle: "InkSight translates handwriting trajectories into real-time teaching signals, placing every intervention right where it's needed.",
                 ctaBtnText: "Launch Workspace",
                 pdpoTitle: "Data Compliance: Zero PII Architecture (HK PDPO Standard)",
@@ -1273,6 +1280,8 @@
                 sbClassTitle: "CLASSROOM SIGNAL / LIVE",
                 sbQTitle: "Q2 · Completing Square (Blockage: 42%)",
                 sbAlert: "Thinking Pause Detected...",
+                sbCanvasPreview: "[Student Stroke Trajectory Preview]",
+                sbCanvasPause: "| Pen paused here",
                 sbTelemTitle: "Apple Pencil Telemetry Stream",
                 m1Title: "Pressure",
                 m2Title: "Current Pause",
@@ -1304,6 +1313,7 @@
             if (!data) return;
 
             document.getElementById('brand-text').innerText = data.brandText;
+            document.getElementById('hero-title').innerHTML = data.heroTitle;
             document.getElementById('hero-subtitle').innerText = data.heroSubtitle;
             document.getElementById('cta-btn-text').innerText = data.ctaBtnText;
             
@@ -1372,6 +1382,8 @@
             document.getElementById('sb-class-title').innerText = data.sbClassTitle;
             document.getElementById('sb-q-title').innerText = data.sbQTitle;
             document.getElementById('sb-alert').innerText = data.sbAlert;
+            document.getElementById('sb-canvas-preview').innerText = data.sbCanvasPreview;
+            document.getElementById('sb-canvas-pause').innerText = data.sbCanvasPause;
             document.getElementById('sb-telem-title').innerText = data.sbTelemTitle;
             document.getElementById('m1-title').innerText = data.m1Title;
             document.getElementById('m2-title').innerText = data.m2Title;
