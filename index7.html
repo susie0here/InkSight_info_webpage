@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InkSight.AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;700&family=Noto+Serif+TC:wght@500;700&family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #F6F5F0;
+            --text-primary: #1D284F;
+            --text-secondary: #5F6B8A;
+            --accent-coral: #EF6448;
+            --accent-navy: #1D284F;
+            --accent-navy-light: #2D3A6E;
+            --accent-periwinkle: #9FAAFE;
+            --gradient-primary: linear-gradient(135deg, #EF6448, #F38B77);
+            --card-bg: #FFFFFF;
+            --card-border: rgba(29, 40, 79, 0.08);
+            --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-serif: 'Noto Serif TC', 'Noto Serif SC', "Songti TC", "Songti SC", "PMingLiU", serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .ambient-glow-1 {
+            position: fixed;
+            top: 5%;
+            left: 10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(239, 100, 72, 0.06) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .ambient-glow-2 {
+            position: fixed;
+            bottom: 10%;
+            right: 10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(159, 170, 254, 0.12) 0%, rgba(0,0,0,0) 70%);
+            border-radius: 50%;
+            filter: blur(90px);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .app-container {
+            position: relative;
+            z-index: 10;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            padding: 4px 8px;
+            background: var(--accent-navy);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-weight: 800;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-icon span {
+            background: var(--accent-coral);
+            color: #FFFFFF;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 4px;
+            font-size: 0.75rem;
+        }
+
+        .brand-name {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--accent-navy);
+            letter-spacing: -0.5px;
+        }
+
+        .lang-switcher {
+            display: flex;
+            background: rgba(29, 40, 79, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 30px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: var(--accent-navy);
+            color: #ffffff;
+            box-shadow: 0 2px 8px rgba(29, 40, 79, 0.2);
+        }
+
+        /* Hero */
+        .hero-section {
+            text-align: center;
+            padding: 70px 0 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 18px;
+            background: rgba(29, 40, 79, 0.06);
+            border: 1px solid rgba(29, 40, 79, 0.12);
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--accent-navy);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .hero-title {
+            font-family: var(--font-sans);
+            font-size: 3.6rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            max-width: 900px;
+            color: var(--accent-navy);
+            letter-spacing: -1px;
+        }
+
+        .hero-title .highlight-text {
+            color: var(--accent-coral);
+            position: relative;
+            display: inline-block;
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 720px;
+            margin-bottom: 36px;
+            font-weight: 400;
+            line-height: 1.7;
+        }
+
+        .btn-figma {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 36px;
+            background: var(--accent-coral);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1.05rem;
+            border-radius: 10px;
+            text-decoration: none;
+            box-shadow: 0 8px 25px -4px rgba(239, 100, 72, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .btn-figma:hover {
+            transform: translateY(-2px);
+            background: #e05337;
+            box-shadow: 0 12px 30px -4px rgba(239, 100, 72, 0.5);
+        }
+
+        /* Section Titles */
+        .section-header {
+            text-align: center;
+            margin: 80px 0 40px;
+        }
+
+        .section-title {
+            font-family: var(--font-serif);
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+            color: var(--accent-navy);
+            font-weight: 700;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        /* Empowerment Logic Chain Grid */
+        .empowerment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 28px;
+            margin-bottom: 80px;
+        }
+
+        .empower-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(29, 40, 79, 0.04);
+            position: relative;
+        }
+
+        .teacher-card {
+            border-top: 4px solid var(--accent-navy);
+        }
+
+        .student-card {
+            border-top: 4px solid var(--accent-coral);
+        }
+
+        .empower-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: rgba(29, 40, 79, 0.06);
+            color: var(--accent-navy);
+        }
+
+        .student-card .empower-badge {
+            background: rgba(239, 100, 72, 0.1);
+            color: var(--accent-coral);
+        }
+
+        .empower-card h3 {
+            font-size: 1.2rem;
+            color: var(--accent-navy);
+            margin-bottom: 24px;
+        }
+
+        .chain-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chain-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: #F9F9F6;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(29, 40, 79, 0.04);
+        }
+
+        .step-num {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #FFFFFF;
+            background: var(--accent-navy);
+            padding: 4px 8px;
+            border-radius: 6px;
+            line-height: 1;
+        }
+
+        .student-card .step-num {
+            background: var(--accent-coral);
+        }
+
+        .chain-step strong {
+            display: block;
+            font-size: 0.95rem;
+            color: var(--accent-navy);
+            margin-bottom: 4px;
+        }
+
+        .chain-step p {
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .chain-arrow {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            opacity: 0.5;
+        }
+
+        /* Workflow Steps */
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin-bottom: 70px;
+        }
+
+        .workflow-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 28px 24px;
+            box-shadow: 0 4px 20px rgba(29, 40, 79, 0.04);
+            position: relative;
+        }
+
+        .step-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--accent-navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1rem;
+            color: #fff;
+            margin-bottom: 18px;
+        }
+
+        .workflow-card h4 {
+            font-size: 1.1rem;
+            color: var(--accent-navy);
+            margin-bottom: 10px;
+        }
+
+        .workflow-card p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Matrix Table */
+        .matrix-container {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(29, 40, 79, 0.04);
+            margin-bottom: 80px;
+            overflow-x: auto;
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            min-width: 700px;
+        }
+
+        .matrix-table th {
+            padding: 16px 20px;
+            background: #F0EFEA;
+            color: var(--accent-navy);
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .matrix-table td {
+            padding: 20px;
+            border-bottom: 1px solid rgba(29, 40, 79, 0.06);
+            vertical-align: top;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .matrix-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .tag-level {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            background: rgba(29, 40, 79, 0.08);
+            color: var(--accent-navy);
+        }
+
+        /* Sandbox Component (Matching Screenshot Dashboard Palette) */
+        .demo-sandbox {
+            background: var(--accent-navy);
+            border-radius: 20px;
+            padding: 36px;
+            margin-bottom: 80px;
+            color: #FFFFFF;
+            box-shadow: 0 20px 40px rgba(29, 40, 79, 0.25);
+        }
+
+        .sandbox-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sandbox-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 24px;
+        }
+
+        .canvas-mock {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 14px;
+            padding: 24px;
+            position: relative;
+            min-height: 280px;
+        }
+
+        .canvas-alert {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: var(--accent-coral);
+            color: #FFFFFF;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .telemetry-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .telemetry-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 16px;
+        }
+
+        .telemetry-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .metric-card {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px;
+            border-radius: 10px;
+        }
+
+        .metric-title {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-periwinkle);
+            margin-top: 2px;
+        }
+
+        .ai-prompt-box {
+            background: #FFFFFF;
+            color: var(--accent-navy);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .ai-prompt-title {
+            font-size: 0.88rem;
+            color: var(--accent-coral);
+            font-weight: 800;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* PDPO Box */
+        .pdpo-box {
+            background: #EFEFEA;
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin: 40px 0 60px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .pdpo-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-navy);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            flex-shrink: 0;
+        }
+
+        .pdpo-text h4 {
+            font-size: 1.05rem;
+            color: var(--accent-navy);
+            margin-bottom: 4px;
+        }
+
+        .pdpo-text p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Reviews */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .review-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 20px rgba(29, 40, 79, 0.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .review-content {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .review-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--accent-navy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .user-info h5 {
+            font-size: 0.95rem;
+            color: var(--accent-navy);
+        }
+
+        .user-info span {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+
+        .rating {
+            color: var(--accent-coral);
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 2px;
+        }
+
+        /* Final Action Section */
+        .final-cta-section {
+            text-align: center;
+            margin: 40px 0 80px;
+            padding: 40px 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(29, 40, 79, 0.04);
+        }
+
+        .final-cta-section h3 {
+            font-size: 1.8rem;
+            color: var(--accent-navy);
+            margin-bottom: 12px;
+        }
+
+        .final-cta-section p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+        }
+
+        @media (max-width: 900px) {
+            .sandbox-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 2.5rem; }
+            .pdpo-box { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header>
+            <a href="#" class="brand-logo">
+                <div class="brand-icon">
+                    INKSIGHT <span>AI</span>
+                </div>
+                <span class="brand-name" id="brand-text">InkSight AI 智慧筆跡靈視</span>
+            </a>
+
+            <div class="lang-switcher">
+                <button class="lang-btn active" data-lang="TC" onclick="switchLanguage('TC')">繁體中文</button>
+                <button class="lang-btn" data-lang="SC" onclick="switchLanguage('SC')">简体中文</button>
+                <button class="lang-btn" data-lang="EN" onclick="switchLanguage('EN')">English</button>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <main class="hero-section">
+            <div class="badge">REAL-TIME LEARNING INTELLIGENCE</div>
+            <h1 class="hero-title" id="hero-title">
+                看見每一次<br><span class="highlight-text">卡住的思考</span>
+            </h1>
+            <p class="hero-subtitle" id="hero-subtitle">
+                InkSight 將學生的書寫軌跡轉譯為即時教學訊號，讓每一次介入都落在最需要的地方。
+            </p>
+
+            <a href="https://zipper-border-06792641.figma.site/" target="_blank" rel="noopener noreferrer" class="btn-figma" id="cta-btn">
+                <span id="cta-btn-text">進入教師工作台</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+        </main>
+
+        <!-- PDPO Security & Privacy Commitment -->
+        <section class="pdpo-box">
+            <div class="pdpo-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+            </div>
+            <div class="pdpo-text">
+                <h4 id="pdpo-title">合規保障：Zero PII 零個人識別資訊架構 (符合 PDPO 標準)</h4>
+                <p id="pdpo-desc">全系統採用 Zero PII 去識別化架構。所有手寫原始軌跡、壓感遙測數據及 AI 分析結果，均透過高強度加密傳送並存儲，完全符合 Personal Data (Privacy) Ordinance (PDPO) 隱私保護標準。</p>
+            </div>
+        </section>
+
+        <!-- Empowerment Logic Chain Section -->
+        <div class="section-header">
+            <h2 class="section-title" id="empower-header-title">賦能師生雙向邏輯鏈條</h2>
+            <p class="section-desc" id="empower-header-desc">從底層數據遙測到頂層認知躍遷，構建課堂教學與自主學習的雙向閉環</p>
+        </div>
+
+        <section class="empowerment-grid">
+            <!-- Teacher Empowerment Chain -->
+            <div class="empower-card teacher-card">
+                <div class="empower-badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px;"><path d="M2 3h20v14H2z"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+                    <span id="tc-badge">教師端賦能鏈條</span>
+                </div>
+                <h3 id="tc-title">從「盲目巡視」轉化為「精準實時點撥」</h3>
+                <div class="chain-list">
+                    <div class="chain-step">
+                        <span class="step-num">01</span>
+                        <div>
+                            <strong id="tc-s1-t">毫秒級筆跡數據遙測</strong>
+                            <p id="tc-s1-d">自動捕捉全班學生筆尖壓感、停頓與擦除，消除課堂視線死角。</p>
+                        </div>
+                    </div>
+                    <div class="chain-arrow">↓</div>
+                    <div class="chain-step">
+                        <span class="step-num">02</span>
+                        <div>
+                            <strong id="tc-s2-t">實時卡點與迷思診斷</strong>
+                            <p id="tc-s2-d">AI 自動區分「計算出錯」與「概念未內化」，準確標註高風險學生。</p>
+                        </div>
+                    </div>
+                    <div class="chain-arrow">↓</div>
+                    <div class="chain-step">
+                        <span class="step-num">03</span>
+                        <div>
+                            <strong id="tc-s3-t">生成式點撥話術建議</strong>
+                            <p id="tc-s3-d">提供 1 分鐘離座問話引導，精準提示學生自行發現錯因。</p>
+                        </div>
+                    </div>
+                    <div class="chain-arrow">↓</div>
+                    <div class="chain-step">
+                        <span class="step-num">04</span>
+                        <div>
+                            <strong id="tc-s4-t">全班觀念動態補強</strong>
+                            <p id="tc-s4-d">基於阻塞矩陣即時調整教學節奏，一鍵發送集體鷹架提示。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Student Empowerment Chain -->
+            <div class="empower-card student-card">
+                <div class="empower-badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px;"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 2 2 3 6 3s6-1 6-3v-5"/></svg>
+                    <span id="st-badge">學生端賦能鏈條</span>
+                </div>
+                <h3 id="st-title">從「挫折停頓」轉化為「高信任自主突破」</h3>
+                <div class="chain-list">
+                    <div class="chain-step">
+                        <span class="step-num">01</span>
+                        <div>
+                            <strong id="st-s1-t">無感自然手寫作答</strong>
+                            <p id="st-s1-d">維持傳統紙筆書寫習慣，無須額外打字或操作複雜介面。</p>
+                        </div>
+                    </div>
+                    <div class="chain-arrow">↓</div>
+                    <div class="chain-step">
+                        <span class="step-num">02</span>
+                        <div>
+                            <strong id="st-s2-t">思考阻塞被實時看見</strong>
+                            <p id="st-s2-d">遭遇認知瓶頸（停頓 > 3 秒）時，系統自動發送求助訊號。</p>
+                        </div>
+                    </div>
+                    <div class="chain-arrow">↓</div>
+                    <div class="chain-step">
+                        <span class="step-num">03</span>
+                        <div>
+                            <strong id="st-s3-t">獲得低焦慮精準點撥</strong>
+                            <p id="st-s3-d">接收教師個人化導引或 iPad 鷹架提示，保留獨立思考空間。</p>
+                        </div>
+                    </div>
+                    <div class="chain-arrow">↓</div>
+                    <div class="chain-step">
+                        <span class="step-num">04</span>
+                        <div>
+                            <strong id="st-s4-t">自主突破與信心建立</strong>
+                            <p id="st-s4-d">在適度提示下順利解題，深化邏輯概念並建立學習成就感。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Operational Workflow Section -->
+        <div class="section-header">
+            <h2 class="section-title" id="wf-header-title">系統操作流程指引</h2>
+            <p class="section-desc" id="wf-header-desc">從課前試卷建置到課中實時診斷，打造端到端無縫教學介入閉環</p>
+        </div>
+
+        <section class="workflow-grid">
+            <div class="workflow-card">
+                <div class="step-badge">1</div>
+                <h4 id="wf-s1-title">課前準備與試卷建置</h4>
+                <p id="wf-s1-desc">教師登入工作台選擇目標班級（如 8A 數學），點選「+ 上傳新考卷」上傳 PDF 或題目影像，系統自動建立題目索引並啟用即時追蹤。</p>
+            </div>
+
+            <div class="workflow-card">
+                <div class="step-badge">2</div>
+                <h4 id="wf-s2-title">學生端作答與硬體遙測</h4>
+                <p id="wf-s2-desc">學生於 iPad 作答，系統高頻採集 Apple Pencil 筆尖壓感、懸停停頓、擦除塗改次數與座標。若停頓超過 3 秒自動觸發「思考滯留」預警。</p>
+            </div>
+
+            <div class="workflow-card">
+                <div class="step-badge">3</div>
+                <h4 id="wf-s3-title">實時 AI 卡點診斷與話術建議</h4>
+                <p id="wf-s3-desc">AI 結合當前步驟與遙測數據即時辨識認知障礙（如區分「算錯」或「等式平衡概念未內化」），自動生成 1 分鐘離座點撥話術與鷹架提示。</p>
+            </div>
+
+            <div class="workflow-card">
+                <div class="step-badge">4</div>
+                <h4 id="wf-s4-title">教師端全班監控與教學介入</h4>
+                <p id="wf-s4-desc">教師可於儀表板切換「整份試卷熱力圖」或「全班逐題阻塞矩陣」，精確掌握全班進度，執行個別指導或進行全班觀念補強。</p>
+            </div>
+        </section>
+
+        <!-- Data Matrix Section -->
+        <div class="section-header">
+            <h2 class="section-title" id="matrix-header-title">端到端數據轉化矩陣</h2>
+            <p class="section-desc" id="matrix-header-desc">將底層硬體感知數據層層提煉，轉化為具體的教學決策與課堂介入行動</p>
+        </div>
+
+        <section class="matrix-container">
+            <table class="matrix-table">
+                <thead>
+                    <tr>
+                        <th id="th-level">數據層級</th>
+                        <th id="th-metrics">採集指標與介面</th>
+                        <th id="th-ai">AI 判讀意圖</th>
+                        <th id="th-action">教師端決策與介入</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="tag-level" id="l1-tag">硬體遙測</span><br><small style="color: var(--text-secondary)">(iPad 學生端)</small></td>
+                        <td id="l1-metrics">• 筆尖壓感 (Pressure)<br>• 思考停頓 (Pause 秒數)<br>• 累積塗改/擦除次數</td>
+                        <td id="l1-ai">• <b>壓感 0 + 停頓高</b>：找不到解題切入點<br>• <b>頻繁塗改 + 有壓感</b>：計算出錯或猶豫未定</td>
+                        <td id="l1-action">畫布彈出「思考滯留」預警，提供第一時間離座關懷訊號。</td>
+                    </tr>
+                    <tr>
+                        <td><span class="tag-level" id="l2-tag">微觀診斷</span><br><small style="color: var(--text-secondary)">(個人卡點診斷)</small></td>
+                        <td id="l2-metrics">• 筆跡動態軌跡復盤<br>• 單題卡點風險 % (如 42%)<br>• 特定步驟迷思概念標註</td>
+                        <td id="l2-ai">精準識別卡點主因</br>（例如：配方法移項時遺漏常數項、未維持等式平衡）。</td>
+                        <td id="l2-action">• 使用 AI 生成的導引話術進行個別問話。<br>• 點擊「推送鷹架提示」將輔助發送至學生 iPad。</td>
+                    </tr>
+                    <tr>
+                        <td><span class="tag-level" id="l3-tag">宏觀分析</span><br><small style="color: var(--text-secondary)">(教師儀表板)</small></td>
+                        <td id="l3-metrics">• 整份試卷阻礙熱力圖<br>• 全班逐題阻塞矩陣<br>• 班級共同薄弱知識點提煉</td>
+                        <td id="l3-ai">呈現整體課堂理解覆蓋率，判定高風險題目</br>（例如：Q2 配方法阻塞率達 42%）。</td>
+                        <td id="l3-action">• 即時調整課堂講授節奏。</br>• 一鍵建立「全班 3 分鐘鷹架提示」進行集體觀念補強。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Demo Preview Component -->
+        <div class="section-header">
+            <h2 class="section-title" id="sandbox-header-title">實時遙測與診斷沙盒預覽</h2>
+            <p class="section-desc" id="sandbox-header-desc">重現 iPad 作答介面與 AI 實時卡點分析模組</p>
+        </div>
+
+        <section class="demo-sandbox">
+            <div class="sandbox-header">
+                <div>
+                    <strong style="color: #ffffff; font-size: 1.1rem;" id="sb-class-title">CLASSROOM SIGNAL / LIVE</strong>
+                    <div style="color: var(--accent-periwinkle); font-size: 0.85rem;" id="sb-q-title">Q2 · 配方法 (認知阻塞率: 42%)</div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <span style="background: var(--accent-coral); color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 700;">LIVE</span>
+                    <span style="background: rgba(255, 255, 255, 0.1); color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 0.8rem;">0.48s LATENCY</span>
+                </div>
+            </div>
+
+            <div class="sandbox-grid">
+                <div class="canvas-mock">
+                    <div class="canvas-alert">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                        <span id="sb-alert">偵測到思考滯留中...</span>
+                    </div>
+                    <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; font-family: monospace; line-height: 1.8;">
+                        [學生筆跡軌跡預覽]<br>
+                        Step 1: x^2 + 6x = 16<br>
+                        Step 2: x^2 + 6x + ___ = 16 + ___ <span style="border-bottom: 2px solid var(--accent-coral); color: var(--accent-coral); font-weight: bold;">| 筆尖停頓於此</span>
+                    </div>
+                </div>
+
+                <div class="telemetry-panel">
+                    <div class="telemetry-box">
+                        <strong style="font-size: 0.85rem; color: #f1f5f9;" id="sb-telem-title">Apple Pencil 遙測數據流</strong>
+                        <div class="telemetry-metrics">
+                            <div class="metric-card">
+                                <div class="metric-title" id="m1-title">即時壓感 (Pressure)</div>
+                                <div class="metric-value">0.00</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-title" id="m2-title">當前思考停頓</div>
+                                <div class="metric-value" style="color: var(--accent-coral);">6.9 秒</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-title" id="m3-title">累積塗改次數</div>
+                                <div class="metric-value">0 次</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-title" id="m4-title">卡點風險指數</div>
+                                <div class="metric-value" style="color: var(--accent-coral);">42% +24pt</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ai-prompt-box">
+                        <div class="ai-prompt-title" id="sb-ai-title">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                            認知阻塞預警
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 10px;" id="sb-ai-desc">
+                            學生在配方法第二步停頓過久，筆尖無移動，可能對等式平衡概念不理解。
+                        </p>
+                        <div style="background: rgba(29, 40, 79, 0.05); padding: 10px; border-radius: 8px; font-size: 0.82rem; color: var(--accent-navy); font-weight: 600;">
+                            <span id="sb-ai-talk">建議點撥：「嘗試看看，如何把左邊的常數項移到等號右邊？」</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reviews & Testimonials Section -->
+        <div class="section-header">
+            <h2 class="section-title" id="review-header-title">前線教師與專家推薦</h2>
+            <p class="section-desc" id="review-header-desc">來自真實教學現場的反饋與評價</p>
+        </div>
+
+        <section class="reviews-grid">
+            <div class="review-card">
+                <div>
+                    <div class="rating">
+                        ★★★★★
+                    </div>
+                    <p class="review-content" id="r1-text">「以前班上有 30 個學生作答時，我根本不知道誰在哪一題卡住。InkSight AI 的阻塞熱力圖讓我一眼就能找出需要離座輔導的學生！」</p>
+                </div>
+                <div class="review-user">
+                    <div class="avatar">李</div>
+                    <div class="user-info">
+                        <h5 id="r1-name">李老師</h5>
+                        <span id="r1-role">中學數學科主任</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div>
+                    <div class="rating">
+                        ★★★★★
+                    </div>
+                    <p class="review-content" id="r2-text">「AI 生成的引導話術非常精準，能幫我精確區分學生到底是『計算算錯』還是『概念完全迷思』，讓個別指導變得很有效率。」</p>
+                </div>
+                <div class="review-user">
+                    <div class="avatar">陳</div>
+                    <div class="user-info">
+                        <h5 id="r2-name">陳老師</h5>
+                        <span id="r2-role">初中數理跨學科教師</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="review-card">
+                <div>
+                    <div class="rating">
+                        ★★★★★
+                    </div>
+                    <p class="review-content" id="r3-text">「系統全面符合香港 PDPO 數據私隱規範，採取的 Zero PII 去識別化架構讓學校引進 AI 教學工具時完全沒有後顧之憂。」</p>
+                </div>
+                <div class="review-user">
+                    <div class="avatar">張</div>
+                    <div class="user-info">
+                        <h5 id="r3-name">張博士</h5>
+                        <span id="r3-role">智慧教育與 AI 科技研究員</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA Section (新增：點擊嘗試按鈕區塊) -->
+        <section class="final-cta-section">
+            <h3 id="final-cta-title">準備好升級您的智慧課堂體驗了嗎？</h3>
+            <p id="final-cta-desc">立即體驗 InkSight AI 智慧筆跡靈視，探索筆跡數據帶來的精準教學變革。</p>
+            <a href="https://zipper-border-06792641.figma.site/" target="_blank" rel="noopener noreferrer" class="btn-figma" id="try-btn" style="font-size: 1.15rem; padding: 18px 48px;">
+                <span id="try-btn-text">點擊嘗試</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+            </a>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p id="footer-text">© 2026 InkSight AI. 保留所有權利。完全遵循香港 Personal Data (Privacy) Ordinance (PDPO) 隱私指引。</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript logic & i18n -->
+    <script>
+        const translations = {
+            TC: {
+                brandText: "InkSight AI 智慧筆跡靈視",
+                heroSubtitle: "InkSight 將學生的書寫軌跡轉譯為即時教學訊號，讓每一次介入都落在最需要的地方。",
+                ctaBtnText: "進入教師工作台",
+                pdpoTitle: "合規保障：Zero PII 零個人識別資訊架構 (符合 PDPO 標準)",
+                pdpoDesc: "全系統採用 Zero PII 去識別化架構。所有手寫原始軌跡、壓感遙測數據及 AI 分析結果，均透過高強度加密傳送並存儲，完全符合 Personal Data (Privacy) Ordinance (PDPO) 隱私保護標準。",
+                empowerHeaderTitle: "賦能師生雙向邏輯鏈條",
+                empowerHeaderDesc: "從底層數據遙測到頂層認知躍遷，構建課堂教學與自主學習的雙向閉環",
+                tcBadge: "教師端賦能鏈條",
+                tcTitle: "從「盲目巡視」轉化為「精準實時點撥」",
+                tcS1T: "毫秒級筆跡數據遙測",
+                tcS1D: "自動捕捉全班學生筆尖壓感、停頓與擦除，消除課堂視線死角。",
+                tcS2T: "實時卡點與迷思診斷",
+                tcS2D: "AI 自動區分「計算出錯」與「概念未內化」，準確標註高風險學生。",
+                tcS3T: "生成式點撥話術建議",
+                tcS3D: "提供 1 分鐘離座問話引導，精準提示學生自行發現錯因。",
+                tcS4T: "全班觀念動態補強",
+                tcS4D: "基於阻塞矩陣即時調整教學節奏，一鍵發送集體鷹架提示。",
+                stBadge: "學生端賦能鏈條",
+                stTitle: "從「挫折停頓」轉化為「高信任自主突破」",
+                stS1T: "無感自然手寫作答",
+                stS1D: "維持傳統紙筆書寫習慣，無須額外打字或操作複雜介面。",
+                stS2T: "思考阻塞被實時看見",
+                stS2D: "遭遇認知瓶頸（停頓 > 3 秒）時，系統自動發送求助訊號。",
+                stS3T: "獲得低焦慮精準點撥",
+                stS3D: "接收教師個人化導引或 iPad 鷹架提示，保留獨立思考空間。",
+                stS4T: "自主突破與信心建立",
+                stS4D: "在適度提示下順利解題，深化邏輯概念並建立學習成就感。",
+                wfHeaderTitle: "系統操作流程指引",
+                wfHeaderDesc: "從課前試卷建置到課中實時診斷，打造端到端無縫教學介入閉環",
+                wfS1Title: "課前準備與試卷建置",
+                wfS1Desc: "教師登入工作台選擇目標班級（如 8A 數學），點選「+ 上傳新考卷」上傳 PDF 或題目影像，系統自動建立題目索引並啟用即時追蹤。",
+                wfS2Title: "學生端作答與硬體遙測",
+                wfS2Desc: "學生於 iPad 作答，系統高頻採集 Apple Pencil 筆尖壓感、懸停停頓、擦除塗改次數與座標。若停頓超過 3 秒自動觸發「思考滯留」預警。",
+                wfS3Title: "實時 AI 卡點診斷與話術建議",
+                wfS3Desc: "AI 結合當前步驟與遙測數據即時辨識認知障礙（如區分「算錯」或「等式平衡概念未內化」），自動生成 1 分鐘離座點撥話術與鷹架提示。",
+                wfS4Title: "教師端全班監控與教學介入",
+                wfS4Desc: "教師可於儀表板切換「整份試卷熱力圖」或「全班逐題阻塞矩陣」，精確掌握全班進度，執行個別指導或進行全班觀念補強。",
+                matrixHeaderTitle: "端到端數據轉化矩陣",
+                matrixHeaderDesc: "將底層硬體感知數據層層提煉，轉化為具體的教學決策與課堂介入行動",
+                thLevel: "數據層級",
+                thMetrics: "採集指標與介面",
+                thAi: "AI 判讀意圖",
+                thAction: "教師端決策與介入",
+                l1Tag: "硬體遙測",
+                l1Metrics: "• 筆尖壓感 (Pressure)<br>• 思考停頓 (Pause 秒數)<br>• 累積塗改/擦除次數",
+                l1Ai: "• <b>壓感 0 + 停頓高</b>：找不到解題切入點<br>• <b>頻繁塗改 + 有壓感</b>：計算出錯或猶豫未定",
+                l1Action: "畫布彈出「思考滯留」預警，提供第一時間離座關懷訊號。",
+                l2Tag: "微觀診斷",
+                l2Metrics: "• 筆跡動態軌跡復盤<br>• 單題卡點風險 % (如 42%)<br>• 特定步驟迷思概念標註",
+                l2Ai: "精準識別卡點主因</br>（例如：配方法移項時遺漏常數項、未維持等式平衡）。",
+                l2Action: "• 使用 AI 生成的導引話術進行個別問話。<br>• 點擊「推送鷹架提示」將輔助發送至學生 iPad。",
+                l3Tag: "宏觀分析",
+                l3Metrics: "• 整份試卷阻礙熱力圖<br>• 全班逐題阻塞矩陣<br>• 班級共同薄弱知識點提煉",
+                l3Ai: "呈現整體課堂理解覆蓋率，判定高風險題目</br>（例如：Q2 配方法阻塞率達 42%）。",
+                l3Action: "• 即時調整課堂講授節奏。• 一鍵建立「全班 3 分鐘鷹架提示」進行集體觀念補強。",
+                sandboxHeaderTitle: "實時遙測與診斷沙盒預覽",
+                sandboxHeaderDesc: "重現 iPad 作答介面與 AI 實時卡點分析模組",
+                sbClassTitle: "CLASSROOM SIGNAL / LIVE",
+                sbQTitle: "Q2 · 配方法 (認知阻塞率: 42%)",
+                sbAlert: "偵測到思考滯留中...",
+                sbTelemTitle: "Apple Pencil 遙測數據流",
+                m1Title: "即時壓感 (Pressure)",
+                m2Title: "當前思考停頓",
+                m3Title: "累積塗改次數",
+                m4Title: "卡點風險指數",
+                sbAiTitle: "認知阻塞預警",
+                sbAiDesc: "學生在配方法第二步停頓過久，筆尖無移動，可能對等式平衡概念不理解。",
+                sbAiTalk: "建議點撥：「嘗試看看，如何把左邊的常數項移到等號右邊？」",
+                reviewHeaderTitle: "前線教師與專家推薦",
+                reviewHeaderDesc: "來自真實教學現場的反饋與評價",
+                r1Text: "「以前班上有 30 個學生作答時，我根本不知道誰在哪一題卡住。InkSight AI 的阻塞熱力圖讓我一眼就能找出需要離座輔導的學生！」",
+                r1Name: "李老師",
+                r1Role: "中學數學科主任",
+                r2Text: "「AI 生成的引導話術非常精準，能幫我精確區分學生到底是『計算算錯』還是『概念完全迷思』，讓個別指導變得很有效率。」",
+                r2Name: "陳老師",
+                r2Role: "初中數理跨學科教師",
+                r3Text: "「系統全面符合香港 PDPO 數據私隱規範，採取的 Zero PII 去識別化架構讓學校引進 AI 教學工具時完全沒有後顧之憂。」",
+                r3Name: "張博士",
+                r3Role: "智慧教育與 AI 科技研究員",
+                finalCtaTitle: "準備好升級您的智慧課堂體驗了嗎？",
+                finalCtaDesc: "立即體驗 InkSight AI 智慧筆跡靈視，探索筆跡數據帶來的精準教學變革。",
+                tryBtnText: "點擊嘗試",
+                footerText: "© 2026 InkSight AI. 保留所有權利。完全遵循香港 Personal Data (Privacy) Ordinance (PDPO) 隱私指引。"
+            },
+            SC: {
+                brandText: "InkSight AI 智慧笔迹灵视",
+                heroSubtitle: "InkSight 将学生的书写轨迹翻译为实时教学信号，让每一次介入都落在最需要的地方。",
+                ctaBtnText: "进入教师工作台",
+                pdpoTitle: "合规保障：Zero PII 零个人识别信息架构 (符合 PDPO 标准)",
+                pdpoDesc: "全系统采用 Zero PII 去标识化架构。所有手写原始轨迹、压感遥测数据及 AI 分析结果，均通过高强度加密传送并存储，完全符合 Personal Data (Privacy) Ordinance (PDPO) 隐私保护标准。",
+                empowerHeaderTitle: "赋能师生双向逻辑链条",
+                empowerHeaderDesc: "从底层数据遥测到顶层认知跃迁，构建课堂教学与自主学习的双向闭环",
+                tcBadge: "教师端赋能链条",
+                tcTitle: "从“盲目巡视”转化为“精准实时点拨”",
+                tcS1T: "毫秒级笔迹数据遥测",
+                tcS1D: "自动捕捉全班学生笔尖压感、停顿与擦除，消除课堂视线死角。",
+                tcS2T: "实时卡点与迷思诊断",
+                tcS2D: "AI 自动区分“计算出错”与“概念未内化”，准确标注高风险学生。",
+                tcS3T: "生成式点拨话术建议",
+                tcS3D: "提供 1 分钟离座问话引导，精准提示学生自行发现错因。",
+                tcS4T: "全班观念动态补强",
+                tcS4D: "基于阻塞矩阵实时调整教学节奏，一键发送集体鹰架提示。",
+                stBadge: "学生端赋能链条",
+                stTitle: "从“挫折停顿”转化为“高信任自主突破”",
+                stS1T: "无感自然手写作答",
+                stS1D: "维持传统纸笔书写习惯，无须额外打字或操作复杂界面。",
+                stS2T: "思考阻塞被实时看见",
+                stS2D: "遭遇认知瓶颈（停顿 > 3 秒）时，系统自动发送求助信号。",
+                stS3T: "获得低焦虑精准点拨",
+                stS3D: "接收教师个性化导引或 iPad 鹰架提示，保留独立思考空间。",
+                stS4T: "自主突破与信心建立",
+                stS4D: "在适度提示下顺利解题，深化逻辑概念并建立学习成就感。",
+                wfHeaderTitle: "系统操作流程指南",
+                wfHeaderDesc: "从课前试卷建置到课中实时诊断，打造端到端无缝教学介入闭环",
+                wfS1Title: "课前准备与试卷建置",
+                wfS1Desc: "教师登录工作台选择目标班级（如 8A 数学），点击“+ 上传新考卷”上传 PDF 或题目图像，系统自动建立题目索引并启用实时追踪。",
+                wfS2Title: "学生端作答与硬件遥测",
+                wfS2Desc: "学生于 iPad 作答，系统高频采集 Apple Pencil 笔尖压感、悬停停顿、擦除涂改次数与坐标。若停顿超过 3 秒自动触发“思考滞留”预警。",
+                wfS3Title: "实时 AI 卡点诊断与话术建议",
+                wfS3Desc: "AI 结合当前步骤与遥测数据实时辨识认知障碍（如区分“算错”或“等式平衡概念未内化”），自动生成 1 分钟离座点拨话术与鹰架提示。",
+                wfS4Title: "教师端全班监控与教学介入",
+                wfS4Desc: "教师可于仪表板切换“整份试卷热力图”或“全班逐题阻塞矩阵”，精确掌握全班进度，执行个体指导或进行全班观念补强。",
+                matrixHeaderTitle: "端到端数据转化矩阵",
+                matrixHeaderDesc: "将底层硬件感知数据层层提炼，转化为具体的教学决策与课堂介入行动",
+                thLevel: "数据层级",
+                thMetrics: "采集指标与界面",
+                thAi: "AI 判读意图",
+                thAction: "教师端决策与介入",
+                l1Tag: "硬件遥测",
+                l1Metrics: "• 笔尖压感 (Pressure)<br>• 思考停顿 (Pause 秒数)<br>• 累积涂改/擦除次数",
+                l1Ai: "• <b>压感 0 + 停顿高</b>：找不到解题切入点<br>• <b>频繁涂改 + 有压感</b>：计算出错或犹豫未定",
+                l1Action: "画布弹出“思考滞留”预警，提供第一时间离座关怀信号。",
+                l2Tag: "微观诊断",
+                l2Metrics: "• 笔迹动态轨迹复盘<br>• 单题卡点风险 % (如 42%)<br>• 特定步骤迷思概念标注",
+                l2Ai: "精准识别卡点主因</br>（例如：配方法移项时遗漏常数项、未维持等式平衡）。",
+                l2Action: "• 使用 AI 生成的导引话术进行个别问话。<br>• 点击“推送鹰架提示”将辅助发送至学生 iPad。",
+                l3Tag: "宏观分析",
+                l3Metrics: "• 整份试卷阻碍热力图<br>• 全班逐题阻塞矩阵<br>• 班级共同薄弱知识点提炼",
+                l3Ai: "呈现整体课堂理解覆盖率，判定高风险题目</br>（例如：Q2 配方法阻塞率达 42%）。",
+                l3Action: "• 实时调整课堂讲授节奏。• 一键建立“全班 3 分钟鹰架提示”进行集体观念补强。",
+                sandboxHeaderTitle: "实时遥测与诊断沙盒预览",
+                sandboxHeaderDesc: "重现 iPad 作答界面与 AI 实时卡点分析模块",
+                sbClassTitle: "CLASSROOM SIGNAL / LIVE",
+                sbQTitle: "Q2 · 配方法 (认知阻塞率: 42%)",
+                sbAlert: "侦测到思考滞留中...",
+                sbTelemTitle: "Apple Pencil 遥测数据流",
+                m1Title: "实时压感 (Pressure)",
+                m2Title: "当前思考停顿",
+                m3Title: "累积涂改次数",
+                m4Title: "卡点风险指数",
+                sbAiTitle: "认知阻塞预警",
+                sbAiDesc: "学生在配方法第二步停顿过久，笔尖无移动，可能对等式平衡概念不理解。",
+                sbAiTalk: "建议点拨：“尝试看看，如何把左边的常数项移到等号右边？”",
+                reviewHeaderTitle: "前线教师与专家推荐",
+                reviewHeaderDesc: "来自真实教学现场的反饋与评价",
+                r1Text: "“以前班上有 30 个学生作答时，我根本不知道谁在哪一题卡住。InkSight AI 的阻塞热力图让我一眼就能找出需要离座辅导的学生！”",
+                r1Name: "李老师",
+                r1Role: "中学数学科主任",
+                r2Text: "“AI 生成的引导话术非常精准，能帮我精确区分学生到底是‘计算算错’还是‘概念完全迷思’，让个别指导变得很有效率。”",
+                r2Name: "陈老师",
+                r2Role: "初中数理跨学科教师",
+                r3Text: "“系统全面符合香港 PDPO 数据隐私规范，采取的 Zero PII 去标识化架构让学校引进 AI 教学工具时完全没有后顾之忧。”",
+                r3Name: "张博士",
+                r3Role: "智慧教育与 AI 科技研究员",
+                finalCtaTitle: "准备好升级您的智慧课堂体验了吗？",
+                finalCtaDesc: "立即体验 InkSight AI 智慧笔迹灵视，探索笔迹数据带来的精准教学变革。",
+                tryBtnText: "点击尝试",
+                footerText: "© 2026 InkSight AI. 保留所有权利。完全遵循香港 Personal Data (Privacy) Ordinance (PDPO) 隐私指引。"
+            },
+            EN: {
+                brandText: "InkSight AI",
+                heroSubtitle: "InkSight translates handwriting trajectories into real-time teaching signals, placing every intervention right where it's needed.",
+                ctaBtnText: "Launch Workspace",
+                pdpoTitle: "Data Compliance: Zero PII Architecture (HK PDPO Standard)",
+                pdpoDesc: "InkSight AI employs Zero PII architecture. Raw stroke telemetry and AI analytics are encrypted end-to-end, fully compliant with HK PDPO standards.",
+                empowerHeaderTitle: "Two-Way Empowerment Logic Chains",
+                empowerHeaderDesc: "From hardware telemetry to cognitive growth, building a closed loop for teaching and learning.",
+                tcBadge: "Teacher Empowerment",
+                tcTitle: "From 'Blind Monitoring' to 'Precision Intervention'",
+                tcS1T: "Millisecond Pen Telemetry",
+                tcS1D: "Captures pencil pressure, pauses, and erasures across the class, eliminating blind spots.",
+                tcS2T: "Real-time Obstacle & Misconception Diagnosis",
+                tcS2D: "AI distinguishes calculation errors from concept gaps, flagging at-risk students.",
+                tcS3T: "Generative Teacher Talking Points",
+                tcS3D: "Provides 1-minute guided prompts to help teachers help students self-correct.",
+                tcS4T: "Dynamic Class-Wide Concept Review",
+                tcS4D: "Adjusts lecture pacing instantly based on blockage matrixes and pushes scaffolding hints.",
+                stBadge: "Student Empowerment",
+                stTitle: "From 'Frustrated Stoppage' to 'High-Confidence Breakthroughs'",
+                stS1T: "Natural & Intuitive Handwriting",
+                stS1D: "Maintains natural pen-on-paper feel without complex UI or typing friction.",
+                stS2T: "Thinking Obstacles Made Visible",
+                stS2D: "Triggers silent alerts when encountering cognitive bottlenecks (pause > 3s).",
+                stS3T: "Low-Anxiety Micro Guidance",
+                stS3D: "Receives personalized teacher prompts or iPad scaffolds while retaining independent thought.",
+                stS4T: "Independent Mastery & Confidence",
+                stS4D: "Solves problems with minimal prompts, deepening comprehension and learning satisfaction.",
+                wfHeaderTitle: "System Operating Workflow",
+                wfHeaderDesc: "End-to-end pedagogical intervention pipeline from pre-class setups to real-time diagnosis.",
+                wfS1Title: "1. Exam Setup & Upload",
+                wfS1Desc: "Teachers log in, select target classes (e.g., 8A Math), upload PDF worksheets, and initiate real-time tracking.",
+                wfS2Title: "2. Student Telemetry Capture",
+                wfS2Desc: "Students write on iPads while Apple Pencil metrics (pressure, pause, erase count) are captured. Pauses over 3s trigger an alert.",
+                wfS3Title: "3. AI Diagnosis & Scaffolding",
+                wfS3Desc: "AI diagnoses cognitive obstacles and generates 1-min teacher talking points.",
+                wfS4Title: "4. Dashboard & Intervention",
+                wfS4Desc: "Teachers view class-wide blockage heatmaps or student matrices to execute 1-on-1 guidance or class-wide concept reviews.",
+                matrixHeaderTitle: "End-to-End Data Transformation Matrix",
+                matrixHeaderDesc: "Transforming low-level hardware telemetry into actionable teaching decisions.",
+                thLevel: "Data Level",
+                thMetrics: "Metrics & Stream",
+                thAi: "AI Intent Recognition",
+                thAction: "Teacher Action",
+                l1Tag: "Hardware Telemetry",
+                l1Metrics: "• Pressure<br>• Pause Duration (Sec)<br>• Erase Count",
+                l1Ai: "• <b>Zero pressure + High pause</b>: Stuck on step entry<br>• <b>High erasing</b>: Calculation error or doubt",
+                l1Action: "Displays 'Thinking Paused' alert for immediate teacher check-in.",
+                l2Tag: "Micro Diagnosis",
+                l2Metrics: "• Stroke Replay<br>• Risk Score % (e.g. 42%)<br>• Misconception Tagging",
+                l2Ai: "Pinpoints exact cognitive obstacles.",
+                l2Action: "• Use AI talking points for guidance.<br>• Push scaffold hints to student iPad.",
+                l3Tag: "Macro Analysis",
+                l3Metrics: "• Exam Heatmap<br>• Class Matrix<br>• Key Knowledge Gaps",
+                l3Ai: "Evaluates overall class mastery and flags high-risk questions (e.g., Q2 blockage at 42%).",
+                l3Action: "• Adjust lecture pace. • Broadcast a 3-minute scaffold prompt to the whole class.",
+                sandboxHeaderTitle: "Real-time Telemetry & Diagnosis Sandbox",
+                sandboxHeaderDesc: "Interactive preview of student iPad interface and AI diagnostic metrics.",
+                sbClassTitle: "CLASSROOM SIGNAL / LIVE",
+                sbQTitle: "Q2 · Completing Square (Blockage: 42%)",
+                sbAlert: "Thinking Pause Detected...",
+                sbTelemTitle: "Apple Pencil Telemetry Stream",
+                m1Title: "Pressure",
+                m2Title: "Current Pause",
+                m3Title: "Erase Count",
+                m4Title: "Obstacle Risk",
+                sbAiTitle: "Cognitive Obstacle Alert",
+                sbAiDesc: "Student paused excessively at Step 2 without pen movement, indicating a potential struggle with equation balancing.",
+                sbAiTalk: "Suggested Prompt: 'Try moving the constant term to the right side of the equals sign.'",
+                reviewHeaderTitle: "Educator Reviews & Endorsements",
+                reviewHeaderDesc: "Feedback from real classrooms and AI education researchers.",
+                r1Text: "“InkSight AI's blockage heatmap lets me immediately spot which students need help in a class of 30!”",
+                r1Name: "Teacher Li",
+                r1Role: "Head of Mathematics",
+                r2Text: "“The AI guidance prompts help me differentiate whether a student made a simple math error or missed a core concept.”",
+                r2Name: "Teacher Chen",
+                r2Role: "STEM & Math Educator",
+                r3Text: "“The Zero PII architecture complies with HK PDPO regulations, ensuring student privacy is fully protected.”",
+                r3Name: "Dr. Zhang",
+                r3Role: "AI Education Researcher",
+                finalCtaTitle: "Ready to Upgrade Your Classroom Experience?",
+                finalCtaDesc: "Try InkSight AI today and explore precision teaching powered by handwriting analytics.",
+                tryBtnText: "Try It Now",
+                footerText: "© 2026 InkSight AI. All rights reserved. Compliant with HK PDPO Privacy Standards."
+            }
+        };
+
+        function switchLanguage(lang) {
+            const data = translations[lang];
+            if (!data) return;
+
+            document.getElementById('brand-text').innerText = data.brandText;
+            document.getElementById('hero-subtitle').innerText = data.heroSubtitle;
+            document.getElementById('cta-btn-text').innerText = data.ctaBtnText;
+            
+            document.getElementById('pdpo-title').innerText = data.pdpoTitle;
+            document.getElementById('pdpo-desc').innerText = data.pdpoDesc;
+
+            document.getElementById('empower-header-title').innerText = data.empowerHeaderTitle;
+            document.getElementById('empower-header-desc').innerText = data.empowerHeaderDesc;
+            document.getElementById('tc-badge').innerText = data.tcBadge;
+            document.getElementById('tc-title').innerText = data.tcTitle;
+            document.getElementById('tc-s1-t').innerText = data.tcS1T;
+            document.getElementById('tc-s1-d').innerText = data.tcS1D;
+            document.getElementById('tc-s2-t').innerText = data.tcS2T;
+            document.getElementById('tc-s2-d').innerText = data.tcS2D;
+            document.getElementById('tc-s3-t').innerText = data.tcS3T;
+            document.getElementById('tc-s3-d').innerText = data.tcS3D;
+            document.getElementById('tc-s4-t').innerText = data.tcS4T;
+            document.getElementById('tc-s4-d').innerText = data.tcS4D;
+
+            document.getElementById('st-badge').innerText = data.stBadge;
+            document.getElementById('st-title').innerText = data.stTitle;
+            document.getElementById('st-s1-t').innerText = data.stS1T;
+            document.getElementById('st-s1-d').innerText = data.stS1D;
+            document.getElementById('st-s2-t').innerText = data.stS2T;
+            document.getElementById('st-s2-d').innerText = data.stS2D;
+            document.getElementById('st-s3-t').innerText = data.stS3T;
+            document.getElementById('st-s3-d').innerText = data.stS3D;
+            document.getElementById('st-s4-t').innerText = data.stS4T;
+            document.getElementById('st-s4-d').innerText = data.stS4D;
+
+            document.getElementById('wf-header-title').innerText = data.wfHeaderTitle;
+            document.getElementById('wf-header-desc').innerText = data.wfHeaderDesc;
+            document.getElementById('wf-s1-title').innerText = data.wfS1Title;
+            document.getElementById('wf-s1-desc').innerText = data.wfS1Desc;
+            document.getElementById('wf-s2-title').innerText = data.wfS2Title;
+            document.getElementById('wf-s2-desc').innerText = data.wfS2Desc;
+            document.getElementById('wf-s3-title').innerText = data.wfS3Title;
+            document.getElementById('wf-s3-desc').innerText = data.wfS3Desc;
+            document.getElementById('wf-s4-title').innerText = data.wfS4Title;
+            document.getElementById('wf-s4-desc').innerText = data.wfS4Desc;
+
+            document.getElementById('matrix-header-title').innerText = data.matrixHeaderTitle;
+            document.getElementById('matrix-header-desc').innerText = data.matrixHeaderDesc;
+            document.getElementById('th-level').innerText = data.thLevel;
+            document.getElementById('th-metrics').innerText = data.thMetrics;
+            document.getElementById('th-ai').innerText = data.thAi;
+            document.getElementById('th-action').innerText = data.thAction;
+
+            document.getElementById('l1-tag').innerText = data.l1Tag;
+            document.getElementById('l1-metrics').innerHTML = data.l1Metrics;
+            document.getElementById('l1-ai').innerHTML = data.l1Ai;
+            document.getElementById('l1-action').innerText = data.l1Action;
+
+            document.getElementById('l2-tag').innerText = data.l2Tag;
+            document.getElementById('l2-metrics').innerHTML = data.l2Metrics;
+            document.getElementById('l2-ai').innerText = data.l2Ai;
+            document.getElementById('l2-action').innerHTML = data.l2Action;
+
+            document.getElementById('l3-tag').innerText = data.l3Tag;
+            document.getElementById('l3-metrics').innerHTML = data.l3Metrics;
+            document.getElementById('l3-ai').innerText = data.l3Ai;
+            document.getElementById('l3-action').innerHTML = data.l3Action;
+
+            document.getElementById('sandbox-header-title').innerText = data.sandboxHeaderTitle;
+            document.getElementById('sandbox-header-desc').innerText = data.sandboxHeaderDesc;
+            document.getElementById('sb-class-title').innerText = data.sbClassTitle;
+            document.getElementById('sb-q-title').innerText = data.sbQTitle;
+            document.getElementById('sb-alert').innerText = data.sbAlert;
+            document.getElementById('sb-telem-title').innerText = data.sbTelemTitle;
+            document.getElementById('m1-title').innerText = data.m1Title;
+            document.getElementById('m2-title').innerText = data.m2Title;
+            document.getElementById('m3-title').innerText = data.m3Title;
+            document.getElementById('m4-title').innerText = data.m4Title;
+            document.getElementById('sb-ai-title').innerText = data.sbAiTitle;
+            document.getElementById('sb-ai-desc').innerText = data.sbAiDesc;
+            document.getElementById('sb-ai-talk').innerText = data.sbAiTalk;
+
+            document.getElementById('review-header-title').innerText = data.reviewHeaderTitle;
+            document.getElementById('review-header-desc').innerText = data.reviewHeaderDesc;
+            document.getElementById('r1-text').innerText = data.r1Text;
+            document.getElementById('r1-name').innerText = data.r1Name;
+            document.getElementById('r1-role').innerText = data.r1Role;
+            document.getElementById('r2-text').innerText = data.r2Text;
+            document.getElementById('r2-name').innerText = data.r2Name;
+            document.getElementById('r2-role').innerText = data.r2Role;
+            document.getElementById('r3-text').innerText = data.r3Text;
+            document.getElementById('r3-name').innerText = data.r3Name;
+            document.getElementById('r3-role').innerText = data.r3Role;
+
+            document.getElementById('final-cta-title').innerText = data.finalCtaTitle;
+            document.getElementById('final-cta-desc').innerText = data.finalCtaDesc;
+            document.getElementById('try-btn-text').innerText = data.tryBtnText;
+
+            document.getElementById('footer-text').innerText = data.footerText;
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                if (btn.getAttribute('data-lang') === lang) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        /* Tech-Art Canvas Dynamic Ink Particle Simulation */
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let particles = [];
+        let inkTrails = [];
+        const mouse = { x: null, y: null, active: false };
+
+        function resizeCanvas() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Mouse Interactivity
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            mouse.active = true;
+
+            // Add dynamic ink diffusion trail particle
+            if (Math.random() > 0.3) {
+                inkTrails.push(new InkParticle(mouse.x, mouse.y));
+            }
+        });
+
+        window.addEventListener('mouseleave', () => {
+            mouse.active = false;
+        });
+
+        // Ambient Nodes Class
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.6;
+                this.vy = (Math.random() - 0.5) * 0.6;
+                this.size = Math.random() * 2 + 1;
+                this.color = Math.random() > 0.5 ? '#06b6d4' : '#6366f1';
+                this.alpha = Math.random() * 0.5 + 0.2;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.alpha;
+                ctx.fill();
+            }
+        }
+
+        // Ink Diffusion Trail Particle Class
+        class InkParticle {
+            constructor(x, y) {
+                this.x = x + (Math.random() - 0.5) * 15;
+                this.y = y + (Math.random() - 0.5) * 15;
+                this.size = Math.random() * 25 + 10;
+                this.maxSize = this.size + Math.random() * 40 + 20;
+                this.vx = (Math.random() - 0.5) * 1.2;
+                this.vy = (Math.random() - 0.5) * 1.2 - 0.5;
+                this.life = 1.0;
+                this.decay = Math.random() * 0.015 + 0.008;
+                this.color = Math.random() > 0.4 ? '63, 102, 241' : '6, 182, 212';
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.size < this.maxSize) {
+                    this.size += 0.8;
+                }
+                this.life -= this.decay;
+            }
+
+            draw() {
+                if (this.life <= 0) return;
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(${this.color}, ${this.life * 0.25})`;
+                ctx.shadowColor = `rgba(${this.color}, 0.5)`;
+                ctx.shadowBlur = 20;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // Initialize Base Ambient Particles
+        for (let i = 0; i < 70; i++) {
+            particles.push(new Particle());
+        }
+
+        // Animation Loop
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Update & Draw Ambient Nodes
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw();
+
+                // Draw connecting faint lines
+                for (let j = index + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 120) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.strokeStyle = '#6366f1';
+                        ctx.globalAlpha = (1 - dist / 120) * 0.15;
+                        ctx.lineWidth = 0.8;
+                        ctx.stroke();
+                    }
+                }
+            });
+
+            // Update & Draw Interactive Ink Trails
+            for (let i = inkTrails.length - 1; i >= 0; i--) {
+                const ink = inkTrails[i];
+                ink.update();
+                ink.draw();
+
+                if (ink.life <= 0) {
+                    inkTrails.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
