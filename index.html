@@ -110,6 +110,7 @@
             font-weight: 800;
             font-size: 0.9rem;
             letter-spacing: 0.5px;
+            white-space: nowrap;
         }
 
         .brand-icon span {
@@ -147,6 +148,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            white-space: nowrap;
         }
 
         .lang-btn.active {
@@ -209,6 +211,7 @@
         .btn-figma {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
             padding: 16px 36px;
             background: var(--accent-coral);
@@ -251,7 +254,7 @@
         /* Empowerment Logic Chain Grid */
         .empowerment-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 28px;
             margin-bottom: 80px;
         }
@@ -321,6 +324,7 @@
             padding: 4px 8px;
             border-radius: 6px;
             line-height: 1;
+            flex-shrink: 0;
         }
 
         .student-card .step-num {
@@ -350,7 +354,7 @@
         /* Workflow Steps */
         .workflow-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 20px;
             margin-bottom: 70px;
         }
@@ -399,13 +403,14 @@
             box-shadow: 0 4px 20px rgba(29, 40, 79, 0.04);
             margin-bottom: 80px;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .matrix-table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            min-width: 700px;
+            min-width: 650px;
         }
 
         .matrix-table th {
@@ -456,6 +461,8 @@
             margin-bottom: 24px;
             padding-bottom: 16px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .sandbox-grid {
@@ -582,7 +589,7 @@
         /* Reviews */
         .reviews-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 24px;
             margin-bottom: 60px;
         }
@@ -621,6 +628,7 @@
             justify-content: center;
             font-weight: 700;
             color: #fff;
+            flex-shrink: 0;
         }
 
         .user-info h5 {
@@ -672,13 +680,141 @@
             font-size: 0.88rem;
         }
 
+        /* RWD Mobile Optimization */
         @media (max-width: 900px) {
-            .sandbox-grid { grid-template-columns: 1fr; }
+            .sandbox-grid { 
+                grid-template-columns: 1fr; 
+            }
         }
 
         @media (max-width: 768px) {
-            .hero-title { font-size: 2.5rem; }
-            .pdpo-box { flex-direction: column; text-align: center; }
+            .app-container {
+                padding: 0 16px;
+            }
+
+            header {
+                flex-direction: column;
+                gap: 16px;
+                padding: 18px 0;
+            }
+
+            .brand-name {
+                font-size: 1.15rem;
+            }
+
+            .hero-section {
+                padding: 40px 0 30px;
+            }
+
+            .badge {
+                font-size: 0.75rem;
+                padding: 5px 14px;
+            }
+
+            .hero-title { 
+                font-size: 2.2rem; 
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+                margin-bottom: 28px;
+            }
+
+            .btn-figma {
+                width: 100%;
+                max-width: 320px;
+                padding: 14px 24px;
+            }
+
+            .pdpo-box { 
+                flex-direction: column; 
+                text-align: center;
+                padding: 20px;
+                margin: 30px 0 40px;
+            }
+
+            .section-header {
+                margin: 50px 0 25px;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+            }
+
+            .section-desc {
+                font-size: 0.92rem;
+            }
+
+            .empowerment-grid, .workflow-grid, .reviews-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                margin-bottom: 50px;
+            }
+
+            .empower-card, .workflow-card, .review-card {
+                padding: 20px;
+            }
+
+            .matrix-container {
+                padding: 16px;
+                margin-bottom: 50px;
+            }
+
+            .demo-sandbox {
+                padding: 20px;
+                margin-bottom: 50px;
+            }
+
+            .canvas-alert {
+                position: relative;
+                top: 0;
+                right: 0;
+                margin-bottom: 12px;
+                display: inline-flex;
+            }
+
+            .canvas-mock {
+                padding: 16px;
+                min-height: auto;
+            }
+
+            .final-cta-section {
+                padding: 30px 16px;
+                margin: 30px 0 50px;
+            }
+
+            .final-cta-section h3 {
+                font-size: 1.4rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.85rem;
+            }
+
+            .lang-btn {
+                padding: 5px 10px;
+                font-size: 0.78rem;
+            }
+
+            .telemetry-metrics {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .chain-step {
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .chain-step strong {
+                font-size: 0.9rem;
+            }
+
+            .chain-step p {
+                font-size: 0.82rem;
+            }
         }
     </style>
 </head>
@@ -909,7 +1045,7 @@
                     <strong style="color: #ffffff; font-size: 1.1rem;" id="sb-class-title">CLASSROOM SIGNAL / LIVE</strong>
                     <div style="color: var(--accent-periwinkle); font-size: 0.85rem;" id="sb-q-title">Q2 · 配方法 (認知阻塞率: 42%)</div>
                 </div>
-                <div style="display: flex; gap: 8px;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                     <span style="background: var(--accent-coral); color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 0.8rem; font-weight: 700;">LIVE</span>
                     <span style="background: rgba(255, 255, 255, 0.1); color: #fff; padding: 4px 12px; border-radius: 6px; font-size: 0.8rem;">0.48s LATENCY</span>
                 </div>
@@ -921,10 +1057,10 @@
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                         <span id="sb-alert">偵測到思考滯留中...</span>
                     </div>
-                    <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; font-family: monospace; line-height: 1.8;">
+                    <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; font-family: monospace; line-height: 1.8; word-break: break-word;">
                         <span id="sb-canvas-preview">[學生筆跡軌跡預覽]</span><br>
                         Step 1: x^2 + 6x = 16<br>
-                        Step 2: x^2 + 6x + ___ = 16 + ___ <span style="border-bottom: 2px solid var(--accent-coral); color: var(--accent-coral); font-weight: bold;" id="sb-canvas-pause">| 筆尖停頓於此</span>
+                        Step 2: x^2 + 6x + ___ = 16 + ___ <span style="border-bottom: 2px solid var(--accent-coral); color: var(--accent-coral); font-weight: bold; display: inline-block;" id="sb-canvas-pause">| 筆尖停頓於此</span>
                     </div>
                 </div>
 
@@ -1027,7 +1163,7 @@
         <section class="final-cta-section">
             <h3 id="final-cta-title">準備好升級您的智慧課堂體驗了嗎？</h3>
             <p id="final-cta-desc">立即體驗 InkSight AI 智慧筆跡靈視，探索筆跡數據帶來的精準教學變革。</p>
-            <a href="https://zipper-border-06792641.figma.site/" target="_blank" rel="noopener noreferrer" class="btn-figma" id="try-btn" style="font-size: 1.15rem; padding: 18px 48px;">
+            <a href="https://zipper-border-06792641.figma.site/" target="_blank" rel="noopener noreferrer" class="btn-figma" id="try-btn">
                 <span id="try-btn-text">點擊嘗試</span>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
             </a>
@@ -1093,12 +1229,12 @@
                 l1Action: "畫布彈出「思考滯留」預警，提供第一時間離座關懷訊號。",
                 l2Tag: "微觀診斷",
                 l2Metrics: "• 筆跡動態軌跡復盤<br>• 單題卡點風險 % (如 42%)<br>• 特定步驟迷思概念標註",
-                l2Ai: "精準識別卡點主因（例如：配方法移項時遺漏常數項、未維持等式平衡）。",
+                l2Ai: "精準識別卡點主因</br>（例如：配方法移項時遺漏常數項、未維持等式平衡）。",
                 l2Action: "• 使用 AI 生成的導引話術進行個別問話。<br>• 點擊「推送鷹架提示」將輔助發送至學生 iPad。",
                 l3Tag: "宏觀分析",
                 l3Metrics: "• 整份試卷阻礙熱力圖<br>• 全班逐題阻塞矩陣<br>• 班級共同薄弱知識點提煉",
-                l3Ai: "呈現整體課堂理解覆蓋率，判定高風險題目（例如：Q2 配方法阻塞率達 42%）。",
-                l3Action: "• 即時調整課堂講授節奏。• 一鍵建立「全班 3 分鐘鷹架提示」進行集體觀念補強。",
+                l3Ai: "呈現整體課堂理解覆蓋率，判定高風險題目</br>（例如：Q2 配方法阻塞率達 42%）。",
+                l3Action: "• 即時調整課堂講授節奏。<br>• 一鍵建立「全班 3 分鐘鷹架提示」進行集體觀念補強。",
                 sandboxHeaderTitle: "實時遙測與診斷沙盒預覽",
                 sandboxHeaderDesc: "重現 iPad 作答介面與 AI 實時卡點分析模組",
                 sbClassTitle: "CLASSROOM SIGNAL / LIVE",
@@ -1181,12 +1317,12 @@
                 l1Action: "画布弹出“思考滞留”预警，提供第一时间离座关怀信号。",
                 l2Tag: "微观诊断",
                 l2Metrics: "• 笔迹动态轨迹复盘<br>• 单题卡点风险 % (如 42%)<br>• 特定步骤迷思概念标注",
-                l2Ai: "精准识别卡点主因（例如：配方法移项时遗漏常数项、未维持等式平衡）。",
+                l2Ai: "精准识别卡点主因</br>（例如：配方法移项时遗漏常数项、未维持等式平衡）。",
                 l2Action: "• 使用 AI 生成的导引话术进行个别问话。<br>• 点击“推送鹰架提示”将辅助发送至学生 iPad。",
                 l3Tag: "宏观分析",
                 l3Metrics: "• 整份试卷阻碍热力图<br>• 全班逐题阻塞矩阵<br>• 班级共同薄弱知识点提炼",
-                l3Ai: "呈现整体课堂理解覆盖率，判定高风险题目（例如：Q2 配方法阻塞率达 42%）。",
-                l3Action: "• 实时调整课堂讲授节奏。• 一键建立“全班 3 分钟鹰架提示”进行集体观念补强。",
+                l3Ai: "呈现整体课堂理解覆盖率，判定高风险题目</br>（例如：Q2 配方法阻塞率达 42%）。",
+                l3Action: "• 实时调整课堂讲授节奏。<br>• 一键建立“全班 3 分钟鹰架提示”进行集体观念补强。",
                 sandboxHeaderTitle: "实时遥测与诊断沙盒预览",
                 sandboxHeaderDesc: "重现 iPad 作答界面与 AI 实时卡点分析模块",
                 sbClassTitle: "CLASSROOM SIGNAL / LIVE",
@@ -1437,23 +1573,22 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // Mouse Interactivity
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
+        const handleMove = (x, y) => {
+            mouse.x = x;
+            mouse.y = y;
             mouse.active = true;
-
-            // Add dynamic ink diffusion trail particle
             if (Math.random() > 0.3) {
                 inkTrails.push(new InkParticle(mouse.x, mouse.y));
             }
+        };
+
+        window.addEventListener('mousemove', (e) => handleMove(e.clientX, e.clientY));
+        window.addEventListener('touchmove', (e) => {
+            if (e.touches.length > 0) {
+                handleMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
         });
 
-        window.addEventListener('mouseleave', () => {
-            mouse.active = false;
-        });
-
-        // Ambient Nodes Class
         class Particle {
             constructor() {
                 this.x = Math.random() * width;
@@ -1482,17 +1617,16 @@
             }
         }
 
-        // Ink Diffusion Trail Particle Class
         class InkParticle {
             constructor(x, y) {
                 this.x = x + (Math.random() - 0.5) * 15;
                 this.y = y + (Math.random() - 0.5) * 15;
-                this.size = Math.random() * 25 + 10;
-                this.maxSize = this.size + Math.random() * 40 + 20;
+                this.size = Math.random() * 20 + 8;
+                this.maxSize = this.size + Math.random() * 30 + 15;
                 this.vx = (Math.random() - 0.5) * 1.2;
                 this.vy = (Math.random() - 0.5) * 1.2 - 0.5;
                 this.life = 1.0;
-                this.decay = Math.random() * 0.015 + 0.008;
+                this.decay = Math.random() * 0.02 + 0.01;
                 this.color = Math.random() > 0.4 ? '63, 102, 241' : '6, 182, 212';
             }
 
@@ -1512,46 +1646,41 @@
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = `rgba(${this.color}, ${this.life * 0.25})`;
                 ctx.shadowColor = `rgba(${this.color}, 0.5)`;
-                ctx.shadowBlur = 20;
+                ctx.shadowBlur = 15;
                 ctx.fill();
                 ctx.restore();
             }
         }
 
-        // Initialize Base Ambient Particles
-        for (let i = 0; i < 70; i++) {
+        for (let i = 0; i < 50; i++) {
             particles.push(new Particle());
         }
 
-        // Animation Loop
         function animate() {
             ctx.clearRect(0, 0, width, height);
 
-            // Update & Draw Ambient Nodes
             particles.forEach((p, index) => {
                 p.update();
                 p.draw();
 
-                // Draw connecting faint lines
                 for (let j = index + 1; j < particles.length; j++) {
                     const p2 = particles[j];
                     const dx = p.x - p2.x;
                     const dy = p.y - p2.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
 
-                    if (dist < 120) {
+                    if (dist < 100) {
                         ctx.beginPath();
                         ctx.moveTo(p.x, p.y);
                         ctx.lineTo(p2.x, p2.y);
                         ctx.strokeStyle = '#6366f1';
-                        ctx.globalAlpha = (1 - dist / 120) * 0.15;
+                        ctx.globalAlpha = (1 - dist / 100) * 0.15;
                         ctx.lineWidth = 0.8;
                         ctx.stroke();
                     }
                 }
             });
 
-            // Update & Draw Interactive Ink Trails
             for (let i = inkTrails.length - 1; i >= 0; i--) {
                 const ink = inkTrails[i];
                 ink.update();
