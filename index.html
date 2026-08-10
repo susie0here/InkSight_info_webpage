@@ -458,11 +458,61 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             padding-bottom: 16px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             flex-wrap: wrap;
             gap: 12px;
+        }
+
+        /* Sandbox Scenarios Bar */
+        .sandbox-scenarios-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .scenario-label {
+            font-size: 0.85rem;
+            color: var(--accent-periwinkle);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .scenario-btn-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .scenario-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .scenario-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
+
+        .scenario-btn.active {
+            background: var(--accent-coral);
+            color: #ffffff;
+            border-color: var(--accent-coral);
+            box-shadow: 0 2px 10px rgba(239, 100, 72, 0.3);
         }
 
         .sandbox-grid {
@@ -493,6 +543,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            transition: background 0.3s ease;
         }
 
         .telemetry-panel {
@@ -531,6 +582,7 @@
             font-weight: 700;
             color: var(--accent-periwinkle);
             margin-top: 2px;
+            transition: color 0.3s ease;
         }
 
         .ai-prompt-box {
@@ -1033,7 +1085,7 @@
             </table>
         </section>
 
-        <!-- Demo Preview Component -->
+        <!-- Demo Preview Component Sandbox -->
         <div class="section-header">
             <h2 class="section-title" id="sandbox-header-title">實時遙測與診斷沙盒預覽</h2>
             <p class="section-desc" id="sandbox-header-desc">重現 iPad 作答介面與 AI 實時卡點分析模組</p>
@@ -1055,16 +1107,24 @@
                 </div>
             </div>
 
+            <!-- Scenario Selection Bar -->
+            <div class="sandbox-scenarios-bar">
+                <span class="scenario-label" id="scenario-label">切換模擬情境：</span>
+                <div class="scenario-btn-group">
+                    <button class="scenario-btn active" data-scenario="stuck" onclick="switchScenario('stuck')">情境一：思考滯留</button>
+                    <button class="scenario-btn" data-scenario="smooth" onclick="switchScenario('smooth')">情境二：順暢解題</button>
+                    <button class="scenario-btn" data-scenario="error" onclick="switchScenario('error')">情境三：計算出錯</button>
+                </div>
+            </div>
+
             <div class="sandbox-grid">
                 <div class="canvas-mock">
-                    <div class="canvas-alert">
+                    <div class="canvas-alert" id="sb-alert-box">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
                         <span id="sb-alert">偵測到思考滯留中...</span>
                     </div>
-                    <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; font-family: monospace; line-height: 1.8; word-break: break-word;">
-                        <span id="sb-canvas-preview">[學生筆跡軌跡預覽]</span><br>
-                        Step 1: x^2 + 6x = 16<br>
-                        Step 2: x^2 + 6x + ___ = 16 + ___ <span style="border-bottom: 2px solid var(--accent-coral); color: var(--accent-coral); font-weight: bold; display: inline-block;" id="sb-canvas-pause">| 筆尖停頓於此</span>
+                    <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem; font-family: monospace; line-height: 1.8; word-break: break-word;" id="sb-canvas-body">
+                        <!-- Dynamic Canvas Preview Content -->
                     </div>
                 </div>
 
@@ -1074,19 +1134,19 @@
                         <div class="telemetry-metrics">
                             <div class="metric-card">
                                 <div class="metric-title" id="m1-title">即時壓感 (Pressure)</div>
-                                <div class="metric-value">0.00</div>
+                                <div class="metric-value" id="m1-val">0.00</div>
                             </div>
                             <div class="metric-card">
                                 <div class="metric-title" id="m2-title">當前思考停頓</div>
-                                <div class="metric-value" style="color: var(--accent-coral);">6.9 秒</div>
+                                <div class="metric-value" id="m2-val">6.9 秒</div>
                             </div>
                             <div class="metric-card">
                                 <div class="metric-title" id="m3-title">累積塗改次數</div>
-                                <div class="metric-value">0 次</div>
+                                <div class="metric-value" id="m3-val">0 次</div>
                             </div>
                             <div class="metric-card">
                                 <div class="metric-title" id="m4-title">卡點風險指數</div>
-                                <div class="metric-value" style="color: var(--accent-coral);">42% +24pt</div>
+                                <div class="metric-value" id="m4-val">42% +24pt</div>
                             </div>
                         </div>
                     </div>
@@ -1181,6 +1241,9 @@
 
     <!-- JavaScript logic & i18n -->
     <script>
+        let currentLang = 'TC';
+        let currentScenario = 'stuck';
+
         const translations = {
             TC: {
                 brandText: "InkSight AI 智慧筆跡靈視",
@@ -1243,17 +1306,56 @@
                 sandboxHeaderDesc: "重現 iPad 作答介面與 AI 實時卡點分析模組",
                 sbClassTitle: "CLASSROOM SIGNAL / LIVE",
                 sbQTitle: "Q2 · 配方法 (認知阻塞率: 42%)",
-                sbAlert: "偵測到思考滯留中...",
-                sbCanvasPreview: "[學生筆跡軌跡預覽]",
-                sbCanvasPause: "| 筆尖停頓於此",
                 sbTelemTitle: "Apple Pencil 遙測數據流",
                 m1Title: "即時壓感 (Pressure)",
                 m2Title: "當前思考停頓",
                 m3Title: "累積塗改次數",
                 m4Title: "卡點風險指數",
-                sbAiTitle: "認知阻塞預警",
-                sbAiDesc: "學生在配方法第二步停頓過久，筆尖無移動，可能對等式平衡概念不理解。",
-                sbAiTalk: "建議點撥：「嘗試看看，如何把左邊的常數項移到等號右邊？」",
+                scenarioLabel: "切換模擬情境：",
+                scenarios: {
+                    stuck: {
+                        btnText: "情境一：思考滯留",
+                        alert: "偵測到思考滯留中...",
+                        alertBg: "var(--accent-coral)",
+                        canvas: `Step 1: x² + 6x = 16<br>Step 2: x² + 6x + ___ = 16 + ___ <span style="border-bottom: 2px solid var(--accent-coral); color: var(--accent-coral); font-weight: bold;">| 筆尖停頓於此</span>`,
+                        pressure: "0.00",
+                        pause: "6.9 秒",
+                        erase: "0 次",
+                        risk: "42% +24pt",
+                        riskColor: "var(--accent-coral)",
+                        aiTitle: "認知阻塞預警",
+                        aiDesc: "學生在配方法第二步停頓過久，筆尖無移動，可能對等式平衡概念不理解。",
+                        aiTalk: "建議點撥：「嘗試看看，如何把左邊的常數項移到等號右邊？」"
+                    },
+                    smooth: {
+                        btnText: "情境二：順暢解題",
+                        alert: "解題流暢進行中",
+                        alertBg: "#10B981",
+                        canvas: `Step 1: x² + 6x = 16<br>Step 2: x² + 6x + 9 = 16 + 9<br>Step 3: (x + 3)² = 25<br>Step 4: x = 2 或 -8 <span style="color: #10B981; font-weight: bold;">| 完成解題</span>`,
+                        pressure: "0.65",
+                        pause: "0.4 秒",
+                        erase: "0 次",
+                        risk: "5%",
+                        riskColor: "#10B981",
+                        aiTitle: "學習狀態良好",
+                        aiDesc: "學生熟練掌握配方法與平方根運算，步驟連貫且無猶豫停頓。",
+                        aiTalk: "建議點撥：「解題正確！可引導嘗試挑戰進階二次方程式題型。」"
+                    },
+                    error: {
+                        btnText: "情境三：計算出錯",
+                        alert: "偵測到概念迷思",
+                        alertBg: "#F59E0B",
+                        canvas: `Step 1: x² + 6x = 16<br>Step 2: x² + 6x + 9 = 16 + 6 <span style="border-bottom: 2px solid #F59E0B; color: #F59E0B; font-weight: bold;">| 右式錯加 6</span><br>Step 3: (x + 3)² = 22 <span style="color: var(--accent-coral); font-weight: bold;">| 塗改 3 次</span>`,
+                        pressure: "0.42",
+                        pause: "2.1 秒",
+                        erase: "3 次",
+                        risk: "78% +45pt",
+                        riskColor: "var(--accent-coral)",
+                        aiTitle: "等式不平衡預警",
+                        aiDesc: "學生於等式左側配方加上 9 時，右側誤加 6，未維持等式平衡法則。",
+                        aiTalk: "建議點撥：「檢查看看，為了讓等式保持平衡，兩邊應該加上相同的數字嗎？」"
+                    }
+                },
                 reviewHeaderTitle: "前線教師與專家推薦",
                 reviewHeaderDesc: "來自真實教學現場的反饋與評價",
                 r1Text: "「以前班上有 30 個學生作答時，我根本不知道誰在哪一題卡住。InkSight AI 的阻塞熱力圖讓我一眼就能找出需要離座輔導的學生！」",
@@ -1321,27 +1423,66 @@
                 l1Action: "画布弹出“思考滞留”预警，提供第一时间离座关怀信号。",
                 l2Tag: "微观诊断",
                 l2Metrics: "• 笔迹动态轨迹复盘<br>• 单题卡点风险 % (如 42%)<br>• 特定步骤迷思概念标注",
-                l2Ai: "精准识别卡点主因</br>（例如：配方法移项时遗漏常数项、未维持等式平衡）。",
+                l2Ai: "精准识别卡点主因（例如：配方法移项时遗漏常数项、未维持等式平衡）。",
                 l2Action: "• 使用 AI 生成的导引话术进行个别问话。<br>• 点击“推送鹰架提示”将辅助发送至学生 iPad。",
                 l3Tag: "宏观分析",
                 l3Metrics: "• 整份试卷阻碍热力图<br>• 全班逐题阻塞矩阵<br>• 班级共同薄弱知识点提炼",
-                l3Ai: "呈现整体课堂理解覆盖率，判定高风险题目</br>（例如：Q2 配方法阻塞率达 42%）。",
+                l3Ai: "呈现整体课堂理解覆盖率，判定高风险题目（例如：Q2 配方法阻塞率达 42%）。",
                 l3Action: "• 实时调整课堂讲授节奏。<br>• 一键建立“全班 3 分钟鹰架提示”进行集体观念补强。",
                 sandboxHeaderTitle: "实时遥测与诊断沙盒预览",
                 sandboxHeaderDesc: "重现 iPad 作答界面与 AI 实时卡点分析模块",
                 sbClassTitle: "CLASSROOM SIGNAL / LIVE",
                 sbQTitle: "Q2 · 配方法 (认知阻塞率: 42%)",
-                sbAlert: "侦测到思考滞留中...",
-                sbCanvasPreview: "[学生笔迹轨迹预览]",
-                sbCanvasPause: "| 笔尖停顿于此",
                 sbTelemTitle: "Apple Pencil 遥测数据流",
                 m1Title: "实时压感 (Pressure)",
                 m2Title: "当前思考停顿",
                 m3Title: "累积涂改次数",
                 m4Title: "卡点风险指数",
-                sbAiTitle: "认知阻塞预警",
-                sbAiDesc: "学生在配方法第二步停顿过久，笔尖无移动，可能对等式平衡概念不理解。",
-                sbAiTalk: "建议点拨：“尝试看看，如何把左边的常数项移到等号右边？”",
+                scenarioLabel: "切换模拟情境：",
+                scenarios: {
+                    stuck: {
+                        btnText: "情境一：思考滞留",
+                        alert: "侦测到思考滞留中...",
+                        alertBg: "var(--accent-coral)",
+                        canvas: `Step 1: x² + 6x = 16<br>Step 2: x² + 6x + ___ = 16 + ___ <span style="border-bottom: 2px solid var(--accent-coral); color: var(--accent-coral); font-weight: bold;">| 笔尖停顿于此</span>`,
+                        pressure: "0.00",
+                        pause: "6.9 秒",
+                        erase: "0 次",
+                        risk: "42% +24pt",
+                        riskColor: "var(--accent-coral)",
+                        aiTitle: "认知阻塞预警",
+                        aiDesc: "学生在配方法第二步停顿过久，笔尖无移动，可能对等式平衡概念不理解。",
+                        aiTalk: "建议点拨：“尝试看看，如何把左边的常数项移到等号右边？”"
+                    },
+                    smooth: {
+                        btnText: "情境二：顺畅解题",
+                        alert: "解题流畅进行中",
+                        alertBg: "#10B981",
+                        canvas: `Step 1: x² + 6x = 16<br>Step 2: x² + 6x + 9 = 16 + 9<br>Step 3: (x + 3)² = 25<br>Step 4: x = 2 或 -8 <span style="color: #10B981; font-weight: bold;">| 完成解题</span>`,
+                        pressure: "0.65",
+                        pause: "0.4 秒",
+                        erase: "0 次",
+                        risk: "5%",
+                        riskColor: "#10B981",
+                        aiTitle: "学习状态良好",
+                        aiDesc: "学生熟练掌握配方法与平方根运算，步骤连贯且无犹豫停顿。",
+                        aiTalk: "建议点拨：“解题正确！可引导尝试挑战进阶二次方程式题型。”"
+                    },
+                    error: {
+                        btnText: "情境三：计算出错",
+                        alert: "侦测到概念迷思",
+                        alertBg: "#F59E0B",
+                        canvas: `Step 1: x² + 6x = 16<br>Step 2: x² + 6x + 9 = 16 + 6 <span style="border-bottom: 2px solid #F59E0B; color: #F59E0B; font-weight: bold;">| 右式错加 6</span><br>Step 3: (x + 3)² = 22 <span style="color: var(--accent-coral); font-weight: bold;">| 涂改 3 次</span>`,
+                        pressure: "0.42",
+                        pause: "2.1 秒",
+                        erase: "3 次",
+                        risk: "78% +45pt",
+                        riskColor: "var(--accent-coral)",
+                        aiTitle: "等式不平衡预警",
+                        aiDesc: "学生于等式左侧配方加上 9 时，右侧误加 6，未维持等式平衡法则。",
+                        aiTalk: "建议点拨：“检查看看，为了让等式保持平衡，两边应该加上相同的数字吗？”"
+                    }
+                },
                 reviewHeaderTitle: "前线教师与专家推荐",
                 reviewHeaderDesc: "来自真实教学现场的反饋与评价",
                 r1Text: "“以前班上有 30 个学生作答时，我根本不知道谁在哪一题卡住。InkSight AI 的阻塞热力图让我一眼就能找出需要离座辅导的学生！”",
@@ -1419,17 +1560,56 @@
                 sandboxHeaderDesc: "Interactive preview of student iPad interface and AI diagnostic metrics.",
                 sbClassTitle: "CLASSROOM SIGNAL / LIVE",
                 sbQTitle: "Q2 · Completing Square (Blockage: 42%)",
-                sbAlert: "Thinking Pause Detected...",
-                sbCanvasPreview: "[Student Stroke Trajectory Preview]",
-                sbCanvasPause: "| Pen paused here",
                 sbTelemTitle: "Apple Pencil Telemetry Stream",
                 m1Title: "Pressure",
                 m2Title: "Current Pause",
                 m3Title: "Erase Count",
                 m4Title: "Obstacle Risk",
-                sbAiTitle: "Cognitive Obstacle Alert",
-                sbAiDesc: "Student paused excessively at Step 2 without pen movement, indicating a potential struggle with equation balancing.",
-                sbAiTalk: "Suggested Prompt: 'Try moving the constant term to the right side of the equals sign.'",
+                scenarioLabel: "Simulated Scenario:",
+                scenarios: {
+                    stuck: {
+                        btnText: "Scenario 1: Thinking Pause",
+                        alert: "Thinking Pause Detected...",
+                        alertBg: "var(--accent-coral)",
+                        canvas: `Step 1: x² + 6x = 16<br>Step 2: x² + 6x + ___ = 16 + ___ <span style="border-bottom: 2px solid var(--accent-coral); color: var(--accent-coral); font-weight: bold;">| Pen paused here</span>`,
+                        pressure: "0.00",
+                        pause: "6.9s",
+                        erase: "0",
+                        risk: "42% +24pt",
+                        riskColor: "var(--accent-coral)",
+                        aiTitle: "Cognitive Obstacle Alert",
+                        aiDesc: "Student paused excessively at Step 2 without pen movement, indicating a potential struggle with equation balancing.",
+                        aiTalk: "Suggested Prompt: 'Try moving the constant term to the right side of the equals sign.'"
+                    },
+                    smooth: {
+                        btnText: "Scenario 2: Smooth Solving",
+                        alert: "Solving Smoothly",
+                        alertBg: "#10B981",
+                        canvas: `Step 1: x² + 6x = 16<br>Step 2: x² + 6x + 9 = 16 + 9<br>Step 3: (x + 3)² = 25<br>Step 4: x = 2 or -8 <span style="color: #10B981; font-weight: bold;">| Completed</span>`,
+                        pressure: "0.65",
+                        pause: "0.4s",
+                        erase: "0",
+                        risk: "5%",
+                        riskColor: "#10B981",
+                        aiTitle: "Optimal Mastery",
+                        aiDesc: "Student demonstrates strong fluency in completing the square and square roots without hesitation.",
+                        aiTalk: "Suggested Prompt: 'Great job! Guide student to try advanced quadratic equation challenges.'"
+                    },
+                    error: {
+                        btnText: "Scenario 3: Concept Error",
+                        alert: "Concept Misconception Detected",
+                        alertBg: "#F59E0B",
+                        canvas: `Step 1: x² + 6x = 16<br>Step 2: x² + 6x + 9 = 16 + 6 <span style="border-bottom: 2px solid #F59E0B; color: #F59E0B; font-weight: bold;">| Added 6 instead of 9</span><br>Step 3: (x + 3)² = 22 <span style="color: var(--accent-coral); font-weight: bold;">| 3 Erases</span>`,
+                        pressure: "0.42",
+                        pause: "2.1s",
+                        erase: "3",
+                        risk: "78% +45pt",
+                        riskColor: "var(--accent-coral)",
+                        aiTitle: "Equation Imbalance Alert",
+                        aiDesc: "Student added 9 to LHS but mistakenly added 6 to RHS, violating equation balance.",
+                        aiTalk: "Suggested Prompt: 'Check again: to keep the equation balanced, shouldn't you add the same number to both sides?'"
+                    }
+                },
                 reviewHeaderTitle: "Educator Reviews & Endorsements",
                 reviewHeaderDesc: "Feedback from real classrooms and AI education researchers.",
                 r1Text: "“InkSight AI's blockage heatmap lets me immediately spot which students need help in a class of 30!”",
@@ -1448,7 +1628,49 @@
             }
         };
 
+        function switchScenario(scenario) {
+            currentScenario = scenario;
+            const langData = translations[currentLang];
+            const scData = langData.scenarios[scenario];
+            if (!scData) return;
+
+            // Highlight Scenario Button
+            document.querySelectorAll('.scenario-btn').forEach(btn => {
+                if (btn.getAttribute('data-scenario') === scenario) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Update Alert Box
+            const alertBox = document.getElementById('sb-alert-box');
+            if (alertBox) alertBox.style.backgroundColor = scData.alertBg;
+            document.getElementById('sb-alert').innerText = scData.alert;
+
+            // Update Canvas Mock Body
+            document.getElementById('sb-canvas-body').innerHTML = scData.canvas;
+
+            // Update Telemetry Stream
+            document.getElementById('m1-val').innerText = scData.pressure;
+            document.getElementById('m2-val').innerText = scData.pause;
+            document.getElementById('m3-val').innerText = scData.erase;
+
+            const m4Val = document.getElementById('m4-val');
+            m4Val.innerText = scData.risk;
+            m4Val.style.color = scData.riskColor;
+
+            // Update AI Prompt Section
+            document.getElementById('sb-ai-title').innerHTML = `
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                ${scData.aiTitle}
+            `;
+            document.getElementById('sb-ai-desc').innerText = scData.aiDesc;
+            document.getElementById('sb-ai-talk').innerText = scData.aiTalk;
+        }
+
         function switchLanguage(lang) {
+            currentLang = lang;
             const data = translations[lang];
             if (!data) return;
 
@@ -1521,17 +1743,24 @@
             document.getElementById('sandbox-header-desc').innerText = data.sandboxHeaderDesc;
             document.getElementById('sb-class-title').innerText = data.sbClassTitle;
             document.getElementById('sb-q-title').innerText = data.sbQTitle;
-            document.getElementById('sb-alert').innerText = data.sbAlert;
-            document.getElementById('sb-canvas-preview').innerText = data.sbCanvasPreview;
-            document.getElementById('sb-canvas-pause').innerText = data.sbCanvasPause;
             document.getElementById('sb-telem-title').innerText = data.sbTelemTitle;
             document.getElementById('m1-title').innerText = data.m1Title;
             document.getElementById('m2-title').innerText = data.m2Title;
             document.getElementById('m3-title').innerText = data.m3Title;
             document.getElementById('m4-title').innerText = data.m4Title;
-            document.getElementById('sb-ai-title').innerText = data.sbAiTitle;
-            document.getElementById('sb-ai-desc').innerText = data.sbAiDesc;
-            document.getElementById('sb-ai-talk').innerText = data.sbAiTalk;
+
+            document.getElementById('scenario-label').innerText = data.scenarioLabel;
+
+            // Update scenario buttons text
+            document.querySelectorAll('.scenario-btn').forEach(btn => {
+                const scKey = btn.getAttribute('data-scenario');
+                if (data.scenarios && data.scenarios[scKey]) {
+                    btn.innerText = data.scenarios[scKey].btnText;
+                }
+            });
+
+            // Refresh scenario content
+            switchScenario(currentScenario);
 
             document.getElementById('review-header-title').innerText = data.reviewHeaderTitle;
             document.getElementById('review-header-desc').innerText = data.reviewHeaderDesc;
@@ -1559,6 +1788,11 @@
                 }
             });
         }
+
+        // Initialize default scenario on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            switchScenario('stuck');
+        });
 
         /* Tech-Art Canvas Dynamic Ink Particle Simulation */
         const canvas = document.getElementById('bg-canvas');
